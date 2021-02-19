@@ -267,7 +267,7 @@
 
 \subsection{Simulation methods}
 
-In order to assess the validation of the proposed method, two simulation studies under different scenarios have been performed. Results are compared to two other alternative approaches consisting on (1) IMPUTE: imputing the average of available values to missing individuals for each variable, and (2) COMMON: analyse the individuals with complete data in all data sets. 
+In order to assess the validation of the proposed method, two simulation studies under different scenarios have been performed. Results are compared to two other alternative approaches consisting on (1) IMPUTE: imputing the average of available values to missing individuals for each variable, and (2) COMPLETE: analyse the individuals with complete data in all data sets. 
 For both, data has been generated similar to as described in \cite{Velden:2006}. Detailed steps are listed below.
 
 Performance of each method was assessed comparing its results applied to data with missing rows to the results obtained if the full data were available (case 1).
@@ -306,13 +306,13 @@ Data were generated under the following scenarios:
 
 So, 2 x 2 x 3 = 12 escenarios were simulated, and for each simulated scenarios 300 data sets were generated.
 
-Generalized Canonical Correlation Analyses was performed for each generated data and canonical latent variables were computed, using full data ("FULL"). Then, the three methods (MGCCA, IMPUTE, COMMON) were applied to the data with missing rows. Finally, performance of each of the three methdos were measured in terms of how diffent are the scores of estimated latent canonical variables with the ones obtained with the full data as follows:
+Generalized Canonical Correlation Analyses was performed for each generated data and canonical latent variables were computed, using full data ("FULL"). Then, the three methods (MGCCA, IMPUTE, COMPLETE) were applied to the data with missing rows. Finally, performance of each of the three methdos were measured in terms of how diffent are the scores of estimated latent canonical variables with the ones obtained with the full data as follows:
 
 $$\text{dist} = \frac{1}{n}\sum_{i=1}^{n}\left(\hat{y}_{full}[i1]-\hat{y}_{approach}[i1]\right)^2+\left(\hat{y}_{full}[i2]-\hat{y}_{approach}[i2]\right)^2$$
 
-where "approach" referes to MGCCA (proposed method), IMPUTE or COMMON.
+where "approach" referes to MGCCA (proposed method), IMPUTE or COMPLETE.
 
-Note that when computing "dist" for COMMON approach, "n" is the number of individuals with complete data, so rows of $\hat{y}_{full}$  and $\hat{y}_{COMMON}$ corresponds to these individuals.
+Note that when computing "dist" for COMPLETE approach, "n" is the number of individuals with complete data, so rows of $\hat{y}_{full}$  and $\hat{y}_{COMPLETE}$ corresponds to these individuals.
 
 \subsubsection{Case 2}
 
