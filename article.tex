@@ -5,6 +5,11 @@
 %% recommended packages
 \usepackage{thumbpdf,lmodern}
 
+%% equations packages
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
 %% another package (only for this demo article)
 \usepackage{framed}
 
@@ -93,6 +98,18 @@
 
 \section{Introduction} \label{sec:intro}
 
+In many biomedical studies, from genetics, clinical or to epidemiological ones, data are collected from recruited individuals, frequenlty having many variables of different types; they can be demographic, such as age, sex, race, etc., morphologic such as weight, height, waist, etc., lipidic such as cholesterol, HDL, LDL, tryglicerides, etc, or obtained from questionaries of nutrition, quality of live, physical activity, etc.
+
+It may be interesting to integrate these sets of data in the analyses. There exists many statistical techniques to do so, from a standard Canonical Correlation Analyses (CCA) to relate two data sets, or Generalized Correlation Canonical Analyses (GCCA) which expands to more than two sets \cite{Tenenhaus:2011}. In parallel, there are some tools to deal with sparse data, when many variables are involved and it is thought that most of them are not associated, see \cite{Tenenhaus:2017}, or when variables are not normally distributed (\cite{MOFA}). This topics will not be covered either discussed in this paper.
+
+The goal of CCA is find two canonical variables computed as a linear combination of variables of each data set with the highest correlation.
+When having more than two data sets, it can be computed several pairwise correlations between canonical variables. Therefore, there exists different criteria to obtain them, \cite{Tenenhaus:2017}.
+Here we focuse on the criteria that minimizes the distance between latent variables and canonical variables of each data set. This criteria has the advantage of providing common coordinates to represent the individuals as in a Principal Component Analyses (PCA). Also, weights for each variable of each data set is obtained as in ordinary CCA, to investigate which variables are most important in the analyses.
+
+
+
+
+
 % \begin{leftbar}
 % The introduction is in principle ``as usual''. However, it should usually embed
 % both the implemented \emph{methods} and the \emph{software} into the respective
@@ -153,6 +170,42 @@
 
 % \section{Models and software} \label{sec:models}
 \section{Methods} \label{sec:methods}
+
+The method described in this paper was first introduced and formulated in \cite{Velden:2006}.
+It is an extension of canonical correlation analyses for two or more data sets (Generalized Canonical Correlation Analyses). 
+In this paper we want to focus on the strategy proposed in \cite{Velden:2006} to deal with missing data in a whole row. They derive a closed form to compute the results inserting a dummy diagonal squared matrix indicating which individuals were missing for each data set. This non-iterative procedure speeds and simplify the calculus procedure.
+
+Results are detailed in \cite{Velden:2006}. Shortly speaking, the method tries to find latent variables which minimizes the mean square error between them and a linear combination of each set of variables. This latent variables are orthogonal by construction and can be used to represent the individuals in a two dimensional space in order to distinguish underlying groups or outliers.
+It must be noted that the coordinates of the latent variables are obtained for all individuals, even if they have data in all sets ($X_j$) or not.
+
+In order to introduce some elements that are discussed along this paper, the goal function of the method is
+
+\begin{equation} \label{eq:crit}
+min F(Y,B_j) = \trace \sum_{j=1}^J \left(Y - X_j B_j\right)^t K_j \left(Y-X_j B_j),
+\end{equation}
+
+Where $X_j$ are the $J$ sets of observed variables, $B_j$ are the coefficients of each variable for each data set and $Y$ are the latent variables.
+
+In the equation \ref{eq:crit}, $X_j$ are $n$ by $p_j$ matrices. Note that all data sets have the same number of rows, $n$ which corresponding to whole sample, i.e. individuals that are present in at least one data set. If a particular individual does not have data in $X_j$, his/her row is filled by an arbitrary value, for instance zeros.
+
+$K_j$ is a $n$-square matrix with zeros and ones in the the diagonal if the individual is not missing for $j$-th data set.
+
+The coeffincients $B_j$ and latent variables scores, $Y$, are obtained by eigen values and vectors computation.
+
+
+\subsection{Other common strategies to deal with missing rows/individuals} 
+
+Other commonly used non-iterative approaches for dealing with missig rows are:
+
+\begin{itemize}
+
+\item \textbf{"IMPUTE"}: It consists of filling empty rows by the variable means from the rest of individuals for whom the data is available. This imputation is done variable by variable. This approach has the advantage of including all individuals in tha analyses regardless if they have information in all data sets or are missing in some of them. On contrary, it has the problem of not taking into account uncertainty since it assigns the same value to all missing individuals.
+
+\item \textbf{"COMPLETE"}: With this strategy, only individuals with available information in all data sets are included in the analyses. Unlike the "IMPUTE" strategy, it does not assign any value but sample size may be substancially reduced.
+
+\end{itemize}
+
+
 
 % The basic Poisson regression model for count data is a special case of the GLM
 % framework \cite{McCullagh+Nelder:1989}. It describes the dependence of a count
@@ -267,26 +320,25 @@
 
 \subsection{Simulation methods}
 
-In order to assess the validation of the proposed method, two simulation studies under different scenarios have been performed. Results are compared to two other alternative approaches consisting on (1) IMPUTE: imputing the average of available values to missing individuals for each variable, and (2) COMPLETE: analyse the individuals with complete data in all data sets. 
-For both, data has been generated similar to as described in \cite{Velden:2006}. Detailed steps are listed below.
+The proposed method (MGCCA) was validated and compared to the other common methods (IMPUTE and COMPLETE), in two simulation studies. 
+The first one assesses how similar are the estimated scores of latent variables, $Y$, of each method compared to what would be obtained if all individuals were available ("full data"). Mean square distance, "MSD" is computed as follows as the mean of euclidan distances of each individual represented in the $Y$ coordinates obtained with full data and for each method.
+In the second simulation study, data were simulated distinguishing two groups of individuals with different means, and each method is evaluated in terms of power to detect differences between the groups.
 
-Performance of each method was assessed comparing its results applied to data with missing rows to the results obtained if the full data were available (case 1).
-In addition, discrimination capacity of each method was evaluated in another simulation study (case 2) where two groups were generated.
+Simulated data were generated similarly to \cite{Velden:2006}. Detailed steps are listed below.
 
-
-\subsubsection{Case 1}
+\subsubsection{Simulation study I}
 
 \begin{itemize}
 
-\item \textbf{Step 1:} generate a matrix, $Y_{latent}$, of $n$ by $2$ independent variables from a standarditzed normal distribution, which are the two latent variables.
+\item \textbf{Step 1:} generate a $n$ by $2$ matrix, $Y$, from a standardized normal distribution, which corresponds to the two latent variables.
 
-\item \textbf{Step 2:} generate two matrices, $b_1$ and $b_2$ with dimensions $2$ by $p_1$ and $2$ by $p_2$ of coefficients ranging from -1 to 1 under a uniform distribution.
+\item \textbf{Step 2:} generate two matrices, $B_1$ and $B_2$ with dimensions $2$ by $p_1$ and $2$ by $p_2$ of coefficients ranging from -1 to 1 under a uniform distribution.
 
-\item \textbf{Step 3:} Compute $X_1$ and $X_2$, of dimensions $n$ by $p_1$ and $n$ by $p_2$, respectively, post-multiplying $Y_{latent}$ by coefficient matrices $b_1$ and $b_2$.
+\item \textbf{Step 3:} Compute $X_1$ and $X_2$, of dimensions $n$ by $p_1$ and $n$ by $p_2$, respectively, post-multiplying $Y$ by coefficient matrices $B_1$ and $B_2$.
 
 \item \textbf{Step 4:} Add noise to $X_1$ and $X_2$ by adding a gnerated normal value of zero mean and $\sigma_2$  standard deviation. At this point full data is obtained.
 
-\item \textbf{Step 4:} Randomly select a proportion of rows for $X_1$ and $X_2$ (not the same rows) to be declared as missing individuals.
+\item \textbf{Step 5:} Randomly select a proportion of rows for $X_1$ and $X_2$ (not the same rows) to be declared as missing individuals.
 
 \end{itemize}
 
@@ -294,47 +346,78 @@ Data were generated under the following scenarios:
 
 \begin{itemize}
 
-\item Fixing the number of individuals $n$ to 500.
+\item Fixing the number of individuals, $n$, to 500.
 
-\item Varying the number of variables $p$,$q$ to 50 and 100.
+\item Varying the number of variables to 50 and 100. In all scenarios, it has been considered the same number of variables for both data sets, $X_1$ and $X_2$, i.e. $p=q$.
 
-\item Varying the noise $\sigma$ to 0.125 and 0.250.
+\item Varying the noise, $\sigma$, to 0.125 and 0.250.
 
-\item Varying the proportion of missing individuals $p$ to 0.1, 0.2 and 0.3.
+\item Varying the proportion of missing individuals, $p$, to 0.1, 0.2 and 0.3.
 
 \end{itemize}
 
-So, 2 x 2 x 3 = 12 escenarios were simulated, and for each simulated scenarios 300 data sets were generated.
+A total of 12 escenarios were simulated, and for each simulated scenario, 100 data sets were generated.
 
-Generalized Canonical Correlation Analyses was performed for each generated data and canonical latent variables were computed, using full data ("FULL"). Then, the three methods (MGCCA, IMPUTE, COMPLETE) were applied to the data with missing rows. Finally, performance of each of the three methdos were measured in terms of how diffent are the scores of estimated latent canonical variables with the ones obtained with the full data as follows:
+Generalized Canonical Correlation Analyses (GCCA) was performed for each generated data and two canonical latent variables were estimate ($\hat{Y}_1$, $\hat{Y}_2$), using full data ("FULL"). Then, the three methods (MGCCA, IMPUTE, COMPLETE) were applied to the data with missing rows. Finally, the Mean Square Distance (MSD) is computed as follows:
 
-$$\text{dist} = \frac{1}{n}\sum_{i=1}^{n}\left(\hat{y}_{full}[i1]-\hat{y}_{approach}[i1]\right)^2+\left(\hat{y}_{full}[i2]-\hat{y}_{approach}[i2]\right)^2$$
+$$\text{MSD} = \frac{1}{n}\sum_{i=1}^{n}\left[\left(\hat{y}_{\text{FULL}}[i1]-\hat{y}_{\text{METHOD}}[i1]\right)^2+\left(\hat{y}_{\text{FULL}}[i2]-\hat{y}_{\text{METHOD}}[i2]\right)^2\right]$$
 
-where "approach" referes to MGCCA (proposed method), IMPUTE or COMPLETE.
+where $\hat{y}_{\text{METHOD}}[ij],\quad j=1,2$ are the latent variables coordinates obtained with each method (MGCCA, IMPUTE or COMPLETE) for the $i$ individual, and $\hat{y}_{\text{FULL}}[ij],\quad j=1,2$ are the latent variables coordinates obtained with full data.
 
-Note that when computing "dist" for COMPLETE approach, "n" is the number of individuals with complete data, so rows of $\hat{y}_{full}$  and $\hat{y}_{COMPLETE}$ corresponds to these individuals.
+Note that when computing the MSD for COMPLETE method, $n$ is the number of individuals with complete data, so rows of $\hat{y}_{\text{FULL}}$ and $\hat{y}_{\text{COMPLETE}}$ corresponds to these individuals.
 
-\subsubsection{Case 2}
+\subsubsection{Simulation study II}
 
 Another generation data process similar to the one described above was performed but now two groups are distinguished, and methods are assessed in terms of discriminate these groups.
 
-All steps are the same except the step 1, where first $n/2$ rows (individuals) of $Y_{latent}$ matrix are generated under a normal distribution with mean equals to $\delta/2$ and the rest of the rows under a normal distribution with mean equals to $-\delta/2$.
+All steps are the same except the step 1, where first $\frac{n}{2}$ rows (individuals) of $Y$ matrix are generated under a normal distribution with mean equals to $\frac{\delta}{2}$ and the rest of the rows under a normal distribution with mean equals to $-\frac{\delta}{2}$.
 
 Once the data were generated, a MANOVA anlyses was performed to test differences in means of estimated canonical variables scores among the two groups.
 
 In these simulation study, number of generated individuals and variables were fixed to $n=500$, and $p=q=50$, respectively. Noise standard deviation was fixed to $\sigma=0.2$. 
-While the varying parameters where the difference in means of groups $\delta=\{0.1, 0.2, 0.3, 0.4, 0.5\}$ and proportion of missing individuals $p=\{0.1, 0.3\}$
+While the varying parameters where the difference in means of groups $\delta=\{0, 0.25, 0.5\}$ and proportion of missing individuals $p=\{0.1, 0.2, 0.3\}$
+
+Finally, 500 data sets were generated and p-values were computed for each of them. Power was computed as the proportion of times the p-value was lower than significance level that was set to 5\%.
 
 
 \subsection{Simulation results}
 
-\subsubsection{Case 1}
+\subsubsection{Simulation study I}
 
-.. to be completed ..
+From simulation study I, the method with best performance was IMPUTE method (see Figure \ref{fig:MSD1}) under all scenarios, since it provides the lowest MSD and therefore the estimated latent variables coordinates was more similar to the ones that would be obtained if all data was available (no missing individuals). While the worst method by far was the COMPLETE one, which analyse only complete cases, i.e. indivivuals with information in all data sets.
+Results are similar regardless the number of variables (rows) and noise variable (columns). And the larger of missing individuals (x-axis), the larger MSD, specially for COMPLETE method. On the other side, IMPUTE and MGCCA method is more robust when proportion of missing individuals increases.
 
-\subsubsection{Case 2}
 
-.. to be completed ..
+\begin{figure}[t!]
+\centering
+\includegraphics{./simulations/case1/plot1a}
+\caption{\label{fig:MSD1} Average of Mean Square Differencs of all 100 replicates for each scenario and method by  proportion of missing individuals, stratified by number of variables, $p=q$ (rows) and noise standard deviation $\sigma$ (columns).}
+\end{figure}
+
+
+Additionally, consistency of results between generated data (replicates) has been described using boxplots within each scenario (Figure \ref{fig:MSD2}). It can be seen that MGCCA method is very consistent, i.e. simulated results are very similar between replicates, compared to other two methods. Therefore, while, on average the IMPUTE method provides better results in terms of MSD, for some data results can be much worse than the ones obtained with MGCCA.
+
+
+\begin{figure}[t!]
+\centering
+\includegraphics{./simulations/case1/plot1b}
+\caption{\label{fig:MSD2} Boxplot of Mean Square Differencs within 100 replicates for each scenario and method by  proportion of missing individuals, stratified by number of variables, $p=q$ (rows) and noise standard deviation $\sigma$ (columns).}
+\end{figure}
+
+
+
+\subsubsection{Simulation study II}
+
+
+From simulation study II results, it can be seen that MGCCA is the method that provides better power overcoming the other two methods in all scenarios (see Figure \ref{fig:pow}), specially when proportions of missing individuals is low (0.1) or moderate (0.2). The COMPLETE method is the least powerfull in all scenarios.
+When proportion of missings is high (0.3) the three methods perform similar in terms of power, but COMPLETE that performs much worse than the other two when difference between groups is high.
+Finally, when data is generated under no difference between groups ("Difference=0" on x-axis), all three methods estimate the same power to significance level, showing that there is no excess of false posive rate. 
+
+\begin{figure}[t!]
+\centering
+\includegraphics[width=1\textwidth]{./simulations/case2/plot2}
+\caption{\label{fig:pow} Power for each method depending on the difference between groups, and stratified by proportions of missing individuals.}
+\end{figure}
 
 
 % For a simple illustration of basic Poisson and NB count regression the
