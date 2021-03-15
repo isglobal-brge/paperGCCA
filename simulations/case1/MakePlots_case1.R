@@ -16,7 +16,7 @@ taula <- rbind(
   data.frame("method"="COMPLETE","dist"=sapply(1:length(res), function(i) mean(res[[i]][3,])), esc)
 )
 
-png("plot1.png", 480*10/7, 480)
+png("plot1a.png", 480*10/7, 480)
 ggplot(data = taula, aes(x = factor(prop.miss), y = dist, colour = method)) +       
   geom_line(aes(group = method)) + geom_point() +
   facet_grid(rows= vars(vars), cols=vars(sigma.noise)) +
@@ -36,7 +36,7 @@ taula <- rbind(
   data.frame("method"="COMPLETE","dist"=unlist(lapply(1:length(res), function(i) res[[i]][3,])), esc2)
 )
 
-png("plot2.png", 480*10/7, 480)
+png("plot1b.png", 480*10/7, 480)
 ggplot(taula, aes(x = factor(prop.miss), y = dist))+ 
   geom_boxplot(aes(fill = method), alpha = 0.5) + 
   facet_grid(rows= vars(vars), cols=vars(sigma.noise)) +

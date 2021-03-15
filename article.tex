@@ -172,7 +172,8 @@ Here we focuse on the criteria that minimizes the distance between latent variab
 \section{Methods} \label{sec:methods}
 
 The method described in this paper was first introduced and formulated in \cite{Velden:2006}.
-It is an extension of canonical correlation analyses for two or more data sets (Generalized Canonical Correlation Analyses). 
+It is an extension of canonical correlation analyses for two or more data sets (Generalized Canonical Correlation Analyses -GCCA-).
+
 In this paper we want to focus on the strategy proposed in \cite{Velden:2006} to deal with missing data in a whole row. They derive a closed form to compute the results inserting a dummy diagonal squared matrix indicating which individuals were missing for each data set. This non-iterative procedure speeds and simplify the calculus procedure.
 
 Results are detailed in \cite{Velden:2006}. Shortly speaking, the method tries to find latent variables which minimizes the mean square error between them and a linear combination of each set of variables. This latent variables are orthogonal by construction and can be used to represent the individuals in a two dimensional space in order to distinguish underlying groups or outliers.
@@ -180,17 +181,42 @@ It must be noted that the coordinates of the latent variables are obtained for a
 
 In order to introduce some elements that are discussed along this paper, the goal function of the method is
 
+
 \begin{equation} \label{eq:crit}
-min F(Y,B_j) = \trace \sum_{j=1}^J \left(Y - X_j B_j\right)^t K_j \left(Y-X_j B_j),
+\min_{Y,B_j} \phi = \text{trace} \sum_{j=1}^J \left(Y - X_j B_j\right)^t K_j \left(Y-X_j B_j \right)
 \end{equation}
 
-Where $X_j$ are the $J$ sets of observed variables, $B_j$ are the coefficients of each variable for each data set and $Y$ are the latent variables.
 
-In the equation \ref{eq:crit}, $X_j$ are $n$ by $p_j$ matrices. Note that all data sets have the same number of rows, $n$ which corresponding to whole sample, i.e. individuals that are present in at least one data set. If a particular individual does not have data in $X_j$, his/her row is filled by an arbitrary value, for instance zeros.
+constrained to $Y^t K Y = \sqrt{J} I_L$,  where $I_L$ is the $L$ by $L$ identity matrix.
 
-$K_j$ is a $n$-square matrix with zeros and ones in the the diagonal if the individual is not missing for $j$-th data set.
 
-The coeffincients $B_j$ and latent variables scores, $Y$, are obtained by eigen values and vectors computation.
+The elements in equation (\ref{eq:crit}) are:
+
+- $X_j$, $j=1,\ldots,J$: $n$ by $p_j$ matrix representing the $j$-th set of observed variables. Note that all data sets, $X_j$, have the same number of rows, $n$, which represents the whole sample, i.e. individuals that are present in at least one data set. If a particular individual does not have data in $X_j$, his/her row is filled by an arbitrary value, for instance zero.
+
+- $K_j$: $n$-square matrix with zeros outside the diagonal, and one in the $i$ row and $i$ column if the $i$-th individual is not missing for $j$-th data set, and zero otherwise.
+
+- $K = \sum_{j=1}^J K_j$
+
+- $B_j$: $p_j$ by $L$ matrix containing the coefficients of each variable for each data set.
+
+- $Y$: $n$ by $L$ matrix with latent variables in columns.
+
+
+The solution of equation (\ref{eq:crit}) is obtained by computing the eigen values and eigen vectors of  of the expression
+
+
+\begin{equation} \label{eq:sol}
+K^{-\frac{1}{2}} \left(\sum_{j=1}^J K_j X_j \left(X_j^t K_j X_j \right)^{-1} X_j^t K_j \right) K^{-\frac{1}{2}} Y^{*} = Y^{*} \Lambda
+\end{equation}
+
+where $\Lambda$ is a diagonal matrix containing the eigen values $\lambda_l$, $l=1,\ldots,L$, and $Y^{*}$ is a $n$ by $L$ orthonormal matrix with eigen vectors in columns. Finally, the latent variables matrix, $Y$, is obtained by 
+
+\begin{equation} \label{eq:latent}
+Y=\sqrt{J} K^{-\frac{1}{2}} Y^{*}
+\end{equation}
+
+Note that when there are more columns than rows, $\left(X_j^t K_j X_j \right)$ in equation (\ref{eq:sol}) becomes singular and the general inverse must be used such as Moore Ponrose-inverse.
 
 
 \subsection{Other common strategies to deal with missing rows/individuals} 
@@ -201,9 +227,13 @@ Other commonly used non-iterative approaches for dealing with missig rows are:
 
 \item \textbf{"IMPUTE"}: It consists of filling empty rows by the variable means from the rest of individuals for whom the data is available. This imputation is done variable by variable. This approach has the advantage of including all individuals in tha analyses regardless if they have information in all data sets or are missing in some of them. On contrary, it has the problem of not taking into account uncertainty since it assigns the same value to all missing individuals.
 
+
 \item \textbf{"COMPLETE"}: With this strategy, only individuals with available information in all data sets are included in the analyses. Unlike the "IMPUTE" strategy, it does not assign any value but sample size may be substancially reduced.
 
 \end{itemize}
+
+
+@@@ discarted strategies (multiple imputation, ¿¿single imputation taking into account other variables??)
 
 
 

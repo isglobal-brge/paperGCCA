@@ -1,0 +1,41 @@
+\begin{thebibliography}{4}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Argelaguet \emph{et~al.}(2020)Argelaguet, Arnol, and
+  Bredikhin}]{MOFA}
+Argelaguet R, Arnol D, Bredikhin D (2020).
+\newblock \enquote{MOFA+: a statistical framework for comprehensive integration
+  of multi-modal single-cell data.}
+\newblock \emph{Genome Biol.}, \textbf{21}(1).
+\newblock \doi{10.1186/s13059-020-02015-1}.
+
+\bibitem[{Tenenhaus and Tenenhaus(2011)}]{Tenenhaus:2011}
+Tenenhaus A, Tenenhaus M (2011).
+\newblock \enquote{Regularized Generalized Canonical Correlation Analysis.}
+\newblock \emph{Psychometrika}, \textbf{76}(2).
+\newblock \doi{10.1007/s11336-011-9206-8}.
+
+\bibitem[{Tenenhaus \emph{et~al.}(2017)Tenenhaus, Tenenhaus, and
+  Groenen}]{Tenenhaus:2017}
+Tenenhaus M, Tenenhaus A, Groenen P (2017).
+\newblock \enquote{Regularized Generalized Canonical Correlation Analysis: A
+  Framework for Sequential Multiblock Component Methods.}
+\newblock \emph{Psychometrika}, \textbf{in press}.
+\newblock \doi{10.1007/s11336-017-9573-x}.
+
+\bibitem[{Velden and Bijmolt(2006)}]{Velden:2006}
+Velden M, Bijmolt T (2006).
+\newblock \enquote{Generalized canonical correlation analysis of matrices with
+  missing rows: a simulation study.}
+\newblock \emph{Psychometrika}, \textbf{71}(2), 323--331.
+\newblock \doi{10.1007/s11336-004-1168-9}.
+
+\end{thebibliography}
